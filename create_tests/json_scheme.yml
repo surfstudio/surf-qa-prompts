@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: Test Case API
+  version: 1.0.0
+  description: Schema for encapsulating information about a single test case.
+
+components:
+  schemas:
+    TestCase:
+      type: object
+      description: Represents a single test case with its details and steps.
+      required: # Properties that MUST be present
+        - labels
+        - summary
+        - priority
+        - estimate
+        - testRepositoryPath
+        - testCaseType
+        - steps
+      properties:
+        labels:
+          type: array
+          description: A list of tags or categories for the test case. Use empty list of none
+          items:
+            type: string
+          example: [ "authentication", "critical", "regression" ]
+        summary:
+          type: ['string', 'null']
+          description: A concise, one-line summary of the test case's purpose.
+          example: "Verify successful user login with valid credentials."
+        description:
+          type: string
+          description: Detailed explanation of the test case's scope and context.
+          nullable: true # Indicates that this field can be null or omitted
+          example: "This test validates user login via standard credentials."
+        priority:
+          type: string
+          description: Severity level of the test case.
+          enum:
+            - Blocker
+            - Critical
+            - Normal
+            - Minor
+          example: Normal
+        estimate:
+          type: integer
+          format: int32 # Common integer format (e.g., for minutes)
+          description: Estimated time to execute the test case, in minutes.
+          minimum: 0 # An estimate can be 0 or more
+          example: 5
+        testRepositoryPath:
+          type: string
+          description: The hierarchical path where this test case is stored in a test management system (e.g., folder structure). Has to use lowercase
+          example: "authentication/login"
+        testCaseType:
+          type: string
+          description: The classification of the test case, based on its scope.
+          enum:
+            - component # Tests a specific isolated component or unit
+            - scenario  # Tests an end-to-end user flow or a larger business scenario
+          example: scenario # Example value conforming to the enum
+        steps:
+          type: array
+          description: An ordered list of individual steps required to execute the test case.
+          minItems: 1 # A test case should have at least one step
+          items:
+            type: object
+            description: A single step within the test case, detailing action, data, and expected result.
+            required:
+              - action
+              - data
+              - result
+            properties:
+              action:
+                type: string
+                description: The action to be performed in this step.
+                example: "Navigate to the application's login page."
+              data:
+                type: string
+                description: Any specific data or inputs required for the action (e.g., input values, URLs). Use "" if none.
+                example: "URL: https://example.com/login"
+              result:
+                type: string
+                description: The expected outcome or observation after performing the action.
+                example: "The login page is displayed correctly."
